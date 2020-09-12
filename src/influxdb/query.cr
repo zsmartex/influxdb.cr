@@ -8,6 +8,7 @@ module InfluxDB
     property! measurement : String
 
     def initialize(@client : Client, @db : String)
+      @measurement = db
       @results = [] of Result
     end
 
@@ -27,7 +28,7 @@ module InfluxDB
     end
 
     def execute
-      parse_results @client.query(build_query, db: @db)
+      self.parse_results @client.query(build_query, db: @db)
     end
 
     private def build_query
@@ -36,21 +37,22 @@ module InfluxDB
       end
     end
 
-    private def parse_results(results)
-      @results = [] of Result
-      results[0]["series"].each do |series|
+    def self.parse_results(results)
+      rq = [] of Result
+      results[0]["series"].as_a.each do |series|
         name = series["name"].as_s
         columns = series["columns"]
-        series["values"].each do |value|
+        series["values"].as_a.each do |value|
           fields = Fields.new
           i = 0
-          value.each do |v|
-            fields[columns[i].as_s] = v
+          value.as_a.each do |v|
+            fields[columns[i].as_s] = v.to_s
             i += 1
           end
-          @results << Result.new(name, fields)
+          rq << Result.new(name, fields)
         end
       end
+      rq
     end
   end
 end
