@@ -41,7 +41,7 @@ module InfluxDB
       end
       resp = client.get "/query?#{params}"
       if resp.status_code == 200
-        JSON.parse(resp.body)["results"]
+        Query.parse_results(JSON.parse(resp.body)["results"])
       else
         err_msg = JSON.parse(resp.body)["error"].as_s
         raise Exception.new("InfluxDB error: #{err_msg}")
