@@ -1,6 +1,8 @@
 name: influxdb
 version: 0.2.1
 
+crystal: ">=0.36.1, < 2.0.0"
+
 authors:
   - Jerome Gravel-Niquet <jeromegn@gmail.com>
   - Stephen von Takach <steve@acaprojects.com>
